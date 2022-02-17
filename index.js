@@ -158,15 +158,21 @@ module.exports = (app, { getRouter }) => {
       return
     }
 
+    const targetCommitish = commitish || config['commitish'] || ref
+    const filterByCommitish = config['filter-by-commitish']
+    const useLatestPublic = config['use-latest-public']
+
     const { draftRelease, lastRelease } = await findReleases({
-      ref,
       context,
-      config,
+      targetCommitish,
+      filterByCommitish,
+      useLatestPublic,
     })
+
     const { commits, pullRequests: mergedPullRequests } =
       await findCommitsWithAssociatedPullRequests({
         context,
-        ref,
+        targetCommitish,
         lastRelease,
         config,
       })
@@ -188,7 +194,7 @@ module.exports = (app, { getRouter }) => {
       name,
       isPreRelease,
       shouldDraft,
-      commitish,
+      targetCommitish,
     })
 
     let createOrUpdateReleaseResponse
